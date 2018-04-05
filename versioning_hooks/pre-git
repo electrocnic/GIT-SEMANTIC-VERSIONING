@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+
+this_script_path=$(readlink -f "$0")
+path_to_this_dir=$(dirname "$this_script_path")
+source "${path_to_this_dir}/versioning_tool_config" 2>/dev/null
+
+# get_branch_name must be called before this function!!!
+assert_increment_arg_given() {
+	if [ "$branch_name" == "$master_version_branch_name" -o "$branch_name" == "$major_version_branch_name" ]; then
+		if [ "$versioning_arg" == "" -a $commit_and_merge_only_if_increment_or_hotfix_argument_given -eq 1 ]; then
+			echo "If you want to commit or merge to the $master_version_branch_name or $major_version_branch_name branches,"
+			echo "you need to append \"--increment\" or \"--hotfix\" to the end of your git-command (after the git arguments)."
+			exit 1;
+		fi
+	fi
+}
+
+get_branch_name() {
+	branch_name="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+	if [ $? -ne 0 ]; then
+		branch_name="master"
+	fi
+	echo "$branch_name"
+}
+
+get_branch_name_and_assert_increment_arg() {
+	branch_name=$(get_branch_name)
+	assert_increment_arg_given
+}
+
+pre_git() {
+	result=0
+
+	if [ "$1" == "merge" ]; then
+		get_branch_name_and_assert_increment_arg
+		"${path_to_this_dir}/versioning_tool_pre_merge.sh" "$@"
+	elif [ "$1" == "commit" ]; then
+		get_branch_name_and_assert_increment_arg
+		"${path_to_this_dir}/versioning_tool_pre_commit.sh" "$@"
+	fi
+	result=$?
+	# add other hooks here #
+	#...
+
+	if [ "$result" -eq 0 ]; then
+		\git "$@"
+	else
+		return 1
+	fi
+}
+
+rm "${path_to_this_dir}/../--increment" 2>/dev/null
+rm "${path_to_this_dir}/../--hotfix" 2>/dev/null
+
+for i
+do
+	shift
+	if [ "$i" == "--increment" -o "$i" == "--hotfix" ]; then
+		versioning_arg="$i"
+	else
+		set -- "$@" "$i"
+	fi
+done
+
+if [ $pre_git_warning -eq 1 ]; then
+	echo "PRE-GIT HOOK INVOKED!"
+fi
+touch "${path_to_this_dir}/../$versioning_arg"
+pre_git "$@"
+final_result=$?
+rm "${path_to_this_dir}/../$versioning_arg" 2>/dev/null
+exit $final_result

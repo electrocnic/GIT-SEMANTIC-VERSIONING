@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# Here you can customize the simple settings without worrying about breaking everything.
+
+# comment line below to disable verbose debug log messages
+# uncomment if you want to trace the execution.
+log_active=0
+
+# 1: Prints a notification to the terminal, that the pre-git hook is active and catched the git command.
+# 0: Hide the message that the pre-git-hook has been invoked, if it is annoying.
+pre_git_warning=0
+
+# Modify to keep auto-incremented version in a different file.
+version_file="version"
+
+# This is an internally file used to keep track of the initiation-process:
+# This file remembers the first steps before and after the initial commit on master:
+# First, do a master commit. Then no master commit is allowed.
+# Then, do a develop commit. Then all commits (master, develop or feature branch) are allowed.
+# This is needed to be able to start with version 0.0.x during the whole initiation phase.
+# Else, the initial versions would look like 1.1.x or 0.1.x or anything like that.
+# But we want 0.0.x until a second commit on develop is done (0.1.x). Second commit on
+# master means 1.0.y (develop will be reset, but counter x/y is still just the
+# incrementing counter)
+buildup_file=".git/version_tmp"
+
+# An internally used backup file of the buildup_file. If commits fail, the correct version
+# can be restored even in the buildup phase.
+backup_file=".git/version_backup"
+
+# Rename, if you want another branch to be the major-release branch.
+# Attention: I did not verify if that works! The tool might have unexpected 
+# behaviour if master is not used by it.
+master_version_branch_name="master"
+
+# Rename, if you want a different branch name for the major releases. E.g. MaJoR or whatever?
+# This is quarantined to work
+major_version_branch_name="major"
+
+# Rename, if you want a different branch name for the minor releases. E.g. develop or whatever?
+# This is quarantined to work
+minor_version_branch_name="minor"
+
+# Defines behaviour on commit to master or major:
+# 0 means, on a direct commit on master or major, just increment minor, like it is a hotfix.
+# 1 means incrementation of the branch (a new major or a new master version)
+default_behaviour_on_commit=0
+
+# Defines behaviour on merge to master or major:
+# 0 means, on a direct commit on master or major, just increment minor, like it is a hotfix.
+# 1 means incrementation of the branch (a new major or a new master version)
+default_behaviour_on_merge=1
+
+# Defines behaviour on git commit or git merge on master or major branch:
+# If set to 1 and not additional "--increment" or "--hotfix" argument is passed together
+# with git commit [git-args] [additional-versioning-arg] or respectively with git merge,
+# The hook will abort the committing/merging providing a message to the user saying that
+# the additional argument is needed in order to determine whether it is a hofix or a version_backup
+# release. If set to 0, the default_behaviour_flags will be used if no argument was provided,
+# which means, if you did not care about providing the argument, but didn't want to e.g. increment
+# the version, as it was a hotfix, you would have to revert that commit by hand.
+# So basically, turning this to 1 means more security to avoid unnecessary pitfalls.
+commit_and_merge_only_if_increment_or_hotfix_argument_given=1
+
+if [ "$((log_active))" -eq 1 ]; then
+	echo "Loaded versioning-tool config."
+fi
