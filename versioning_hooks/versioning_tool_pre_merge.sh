@@ -120,12 +120,12 @@ get_branch_names() {
 get_version_files() {
 	stash_result=$(\git stash)
 	log "Result of stash: $stash_result"
-	\git checkout "$their_branch"
+	\git checkout "$their_branch" >/dev/null 2>&1
 	their_version=$(read_version_file)
-	\git checkout "$our_branch"
+	\git checkout "$our_branch" >/dev/null 2>&1
 	if [ "$stash_result" != "No local changes to save" ]; then
 		log "stash pop"
-		\git stash pop
+		\git stash pop >/dev/null 2>&1
 	fi
 	our_version=$(read_version_file)
 
