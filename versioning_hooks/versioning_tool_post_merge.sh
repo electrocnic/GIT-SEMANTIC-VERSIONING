@@ -48,7 +48,7 @@ new_message=$(prepare_new_merge_message "$new_version")
 \git commit --amend -m "$new_message"
 enable_hooks
 
-rm ".git/merging"
+rm ".git/merging" 2>/dev/null
 
 # Delete backup file as commit was successful:
 delete_file "${backup_file}"
