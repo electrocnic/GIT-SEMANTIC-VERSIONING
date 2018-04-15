@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Call this shell script from within git's post-commit file.
 # Simply do .git/hooks/versioning_tool_post_commit.sh inside post-commit

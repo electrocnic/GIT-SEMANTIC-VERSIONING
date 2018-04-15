@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 source "./test-util.sh" >/dev/null 2>&1
@@ -7,7 +7,7 @@ source "./test-util.sh" >/dev/null 2>&1
 prepare_test() {
 	mark_start_time
 	set_test_name "$1"
-	./versioning_install.sh "FRESH_INSTALL!" "NO_SETUP"
+	./versioning_install.sh 3 # delete old repo, install scripts but not branch setup.
 	set_default_flags
 	source ".git/hooks/versioning_tool_config" >/dev/null 2>&1
 }
@@ -148,19 +148,6 @@ init_git_repo() {
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.0.3")
 }
-
-
-#TODO: add following test cases:
-# OK: 1. merge feature branch commits into minor
-# OK 2. merge minor commits into major (OK 1 without --increment/--hotfix, OK 1 with one, OK 1 with the other)
-# OK 3. merge major commits into master (OK 1 without --increment/--hotfix, OK 1 with one, OK 1 with the other)
-# OK 4. merge feature into major/master for hotfix.
-# OK 5. commit on major/master for hotfix.
-# OK 6. commit on major/master for increment.
-# Merge conflicts cannot be handeled in tests sadly.
-# OK Test default behaviour flags and incremental-flag.
-
-
 
 test_010__pass_version_0_0_1_5_after_merge_from_develop_to_minor() {
 	prepare_test "test_010"
@@ -1063,6 +1050,6 @@ run_all_tests() {
 #test_strict_assert_equal_string
 #test_strict_assert_not_equal_string
 
-
+echo "Note: Running the tests will install the git-wrapper script into the home directory and will add a line to the ~/.bashrc file! This will not be removed automatically after the tests finished. You can uninstall these things with the uninstall script."
 prompt_user_for_confirm_cancel "Attention! If there is a .git folder in this directory, it will be deleted!! Are you sure you want to run the tests within this folder?"
 run_all_tests

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This is an example how you can invoke the versioning-tool with a single additional line in your own post-merge script:
 #
