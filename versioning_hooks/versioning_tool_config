@@ -62,6 +62,13 @@ default_behaviour_on_merge=1
 # So basically, turning this to 1 means more security to avoid unnecessary pitfalls.
 commit_and_merge_only_if_increment_or_hotfix_argument_given=1
 
+
+# Turns the version in commit-message on or off.
+# 0: Commit message will not be edited by this script, thus your original commit message will stay as it is.
+# 1: The version will be appended at the beginning of the commit message like this:
+#		 [1.0.12.67]: 'Commit-Message'
+version_in_commit_message=1
+
 if [ "$((log_active))" -eq 1 ]; then
 	echo "Loaded versioning-tool config."
 fi

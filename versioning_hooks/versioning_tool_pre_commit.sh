@@ -136,6 +136,8 @@ resolve_increment() {
 		versioning_arg="--increment"
 	elif [ -e ".git/--hotfix" ]; then
 		versioning_arg="--hotfix"
+	elif [ -e ".git/--no-increment" ]; then
+		versioning_arg="--no-increment"
 	else
 		versioning_arg=""
 	fi
@@ -143,13 +145,13 @@ resolve_increment() {
 	if [ "$git_operation" == "commit" ]; then
 		if [ "$versioning_arg" == "--hotfix" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_commit -eq 0 ]; then
 			new_minor="$((minor+1))"
-		elif [ "$versioning_arg" == "--increment" -o $default_behaviour_on_commit -eq 1 ]; then
+		elif [ "$versioning_arg" == "--increment" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_commit -eq 1 ]; then
 			master_major_increment
 		fi
 	elif [ "$git_operation" == "merge" ]; then
 		if [ "$versioning_arg" == "--hotfix" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_merge -eq 0 ]; then
 			new_minor="$((minor+1))"
-		elif [ "$versioning_arg" == "--increment" -o $default_behaviour_on_merge -eq 1 ]; then
+		elif [ "$versioning_arg" == "--increment" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_merge -eq 1 ]; then
 			master_major_increment
 		fi
 	fi

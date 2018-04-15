@@ -2,6 +2,9 @@
 #
 # Call this shell script from within git's post-merge file.
 #
+# Updates the commit count of the version file.
+# Updates also the commit message if version_in_commit_message is true.
+#
 
 
 source .git/hooks/versioning_tool_config 2>/dev/null
@@ -19,8 +22,12 @@ enable_hooks() {
 
 prepare_new_merge_message() {
 	old_message=$(\git log -1 --pretty=%B)
-	old_message_without_version=$(echo "$old_message" | sed -re "s~\[[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+]:([[:print:]]*)~\1~g")
-	echo "[$1]:$old_message_without_version"
+	old_message_without_version=$(echo "$old_message" | sed -re "s~(\[[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+]:)?( )*([[:print:]]*)~\3~g")
+	if [ $version_in_commit_message -eq 1 ]; then
+		echo "[$1]: $old_message_without_version"
+	else
+		echo "$old_message_without_version"
+	fi
 }
 
 # ---------------------- Start ---------------------- #
