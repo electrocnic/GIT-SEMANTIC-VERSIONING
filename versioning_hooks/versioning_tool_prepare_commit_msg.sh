@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Call this shell script from within git's prepare-commit-msg file.
 # Simply do .git/hooks/versioning_tool_prepare_commit_msg.sh "$1" inside prepare-commit-msg
