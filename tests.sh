@@ -178,19 +178,24 @@ common_buildup() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-# default_behaviour_on_(commit|merge) | commit_and_merge_only_if_increment_or_hotfix_argument_given | nothing (00) / increment (01) / hotfix (10)
-#                  0                  |                               0                             |                    0     0                 
-#                  0                  |                               0                             |                    0     1                 
-#                  0                  |                               0                             |                    1     0                 
-#                  0                  |                               1                             |                    0     0                 
-#                  0                  |                               1                             |                    0     1                 
-#                  0                  |                               1                             |                    1     0                 
-#                  1                  |                               0                             |                    0     0                 
-#                  1                  |                               0                             |                    0     1                 
-#                  1                  |                               0                             |                    1     0                 
-#                  1                  |                               1                             |                    0     0                 
-#                  1                  |                               1                             |                    0     1                 
-#                  1                  |                               1                             |                    1     0                 
+# default_behaviour_on_(commit|merge) | commit_and_merge_only_if_increment_or_hotfix_argument_given | nothing (00) / increment (01) / hotfix (10) / no-increment (11)
+#                  0                  |                               0                             |                    0     0
+#                  0                  |                               0                             |                    0     1
+#                  0                  |                               0                             |                    1     0
+#                  0                  |                               0                             |                    1     1
+#                  0                  |                               1                             |                    0     0
+#                  0                  |                               1                             |                    0     1
+#                  0                  |                               1                             |                    1     0
+#                  0                  |                               1                             |                    1     1
+#                  1                  |                               0                             |                    0     0
+#                  1                  |                               0                             |                    0     1
+#                  1                  |                               0                             |                    1     0
+#                  1                  |                               0                             |                    1     1
+#                  1                  |                               1                             |                    0     0
+#                  1                  |                               1                             |                    0     1
+#                  1                  |                               1                             |                    1     0
+#                  1                  |                               1                             |                    1     1
+
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++ Minor to major ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -239,6 +244,18 @@ test_013__merge_minor_to_major__settings_0_0_10() {
 	finish_test
 }
 
+test_014__merge_minor_to_major__settings_0_0_11() {
+	prepare_test "test_014"
+	common_minor_to_major_0_0
+
+	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.1.6")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
 # default_behaviour_on_commit and default_behaviour_on_merge both 0, means minor will be incremented if no arg given.
 # commit_and_merge_only_if_increment_or_hotfix_argument_given = 1, means default values will be ignored and user will be prompted.
 common_minor_to_major_0_1() {
@@ -247,8 +264,8 @@ common_minor_to_major_0_1() {
 	common_buildup
 }
 
-test_014__merge_minor_to_major__settings_0_1_00() {
-	prepare_test "test_014"
+test_015__merge_minor_to_major__settings_0_1_00() {
+	prepare_test "test_015"
 	common_minor_to_major_0_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' >/dev/null 2>&1
@@ -258,8 +275,8 @@ test_014__merge_minor_to_major__settings_0_1_00() {
 	finish_test
 }
 
-test_015__merge_minor_to_major__settings_0_1_01() {
-	prepare_test "test_015"
+test_016__merge_minor_to_major__settings_0_1_01() {
+	prepare_test "test_016"
 	common_minor_to_major_0_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --increment >/dev/null 2>&1
@@ -270,13 +287,25 @@ test_015__merge_minor_to_major__settings_0_1_01() {
 	finish_test
 }
 
-test_016__merge_minor_to_major__settings_0_1_10() {
-	prepare_test "test_016"
+test_017__merge_minor_to_major__settings_0_1_10() {
+	prepare_test "test_017"
 	common_minor_to_major_0_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(assert_equal_string "$(read_version_file)" "0.0.2.6")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_018__merge_minor_to_major__settings_0_1_11() {
+	prepare_test "test_018"
+	common_minor_to_major_0_1
+
+	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.1.6")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -290,8 +319,8 @@ common_minor_to_major_1_0() {
 	common_buildup
 }
 
-test_017__merge_minor_to_major__settings_1_0_00() {
-	prepare_test "test_017"
+test_019__merge_minor_to_major__settings_1_0_00() {
+	prepare_test "test_019"
 	common_minor_to_major_1_0
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' >/dev/null 2>&1
@@ -302,8 +331,8 @@ test_017__merge_minor_to_major__settings_1_0_00() {
 	finish_test
 }
 
-test_018__merge_minor_to_major__settings_1_0_01() {
-	prepare_test "test_018"
+test_020__merge_minor_to_major__settings_1_0_01() {
+	prepare_test "test_020"
 	common_minor_to_major_1_0
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --increment >/dev/null 2>&1
@@ -314,13 +343,25 @@ test_018__merge_minor_to_major__settings_1_0_01() {
 	finish_test
 }
 
-test_019__merge_minor_to_major__settings_1_0_10() {
-	prepare_test "test_019"
+test_021__merge_minor_to_major__settings_1_0_10() {
+	prepare_test "test_021"
 	common_minor_to_major_1_0
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(assert_equal_string "$(read_version_file)" "0.0.2.6")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_022__merge_minor_to_major__settings_1_0_11() {
+	prepare_test "test_022"
+	common_minor_to_major_1_0
+
+	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.1.6")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -334,8 +375,8 @@ common_minor_to_major_1_1() {
 	common_buildup
 }
 
-test_020__merge_minor_to_major__settings_1_1_00() {
-	prepare_test "test_020"
+test_023__merge_minor_to_major__settings_1_1_00() {
+	prepare_test "test_023"
 	common_minor_to_major_1_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' >/dev/null 2>&1
@@ -345,8 +386,8 @@ test_020__merge_minor_to_major__settings_1_1_00() {
 	finish_test
 }
 
-test_021__merge_minor_to_major__settings_1_1_01() {
-	prepare_test "test_021"
+test_024__merge_minor_to_major__settings_1_1_01() {
+	prepare_test "test_024"
 	common_minor_to_major_1_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --increment >/dev/null 2>&1
@@ -357,8 +398,8 @@ test_021__merge_minor_to_major__settings_1_1_01() {
 	finish_test
 }
 
-test_022__merge_minor_to_major__settings_1_1_10() {
-	prepare_test "test_022"
+test_025__merge_minor_to_major__settings_1_1_10() {
+	prepare_test "test_025"
 	common_minor_to_major_1_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --hotfix >/dev/null 2>&1
@@ -369,7 +410,17 @@ test_022__merge_minor_to_major__settings_1_1_10() {
 	finish_test
 }
 
+test_026__merge_minor_to_major__settings_1_1_11() {
+	prepare_test "test_026"
+	common_minor_to_major_1_1
 
+	git merge "$minor_version_branch_name" -m 'Merge feature from minor to major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.1.6")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++ Major to master ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -381,8 +432,8 @@ common_major_to_master_0_0() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_023__merge_major_to_master__settings_0_0_00() {
-	prepare_test "test_023"
+test_027__merge_major_to_master__settings_0_0_00() {
+	prepare_test "test_027"
 	common_major_to_master_0_0
 
 	git checkout master >/dev/null 2>&1
@@ -395,8 +446,8 @@ test_023__merge_major_to_master__settings_0_0_00() {
 	finish_test
 }
 
-test_024__merge_major_to_master__settings_0_0_01() {
-	prepare_test "test_024"
+test_028__merge_major_to_master__settings_0_0_01() {
+	prepare_test "test_028"
 	common_major_to_master_0_0
 
 	git checkout master >/dev/null 2>&1
@@ -409,8 +460,8 @@ test_024__merge_major_to_master__settings_0_0_01() {
 	finish_test
 }
 
-test_025__merge_major_to_master__settings_0_0_10() {
-	prepare_test "test_025"
+test_029__merge_major_to_master__settings_0_0_10() {
+	prepare_test "test_029"
 	common_major_to_master_0_0
 
 	git checkout master >/dev/null 2>&1
@@ -418,6 +469,20 @@ test_025__merge_major_to_master__settings_0_0_10() {
 	git merge "$major_version_branch_name" -m 'Merge feature from major to master release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.1.1.7")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_030__merge_major_to_master__settings_0_0_11() {
+	prepare_test "test_030"
+	common_major_to_master_0_0
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git merge "$major_version_branch_name" -m 'Merge feature from major to master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.1.0.7")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -432,8 +497,8 @@ common_major_to_master_0_1() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_026__merge_major_to_master__settings_0_1_00() {
-	prepare_test "test_026"
+test_031__merge_major_to_master__settings_0_1_00() {
+	prepare_test "test_031"
 	common_major_to_master_0_1
 
 	git merge "$minor_version_branch_name" -m 'Merge feature from major to master release branch' >/dev/null 2>&1
@@ -443,8 +508,8 @@ test_026__merge_major_to_master__settings_0_1_00() {
 	finish_test
 }
 
-test_027__merge_major_to_master__settings_0_1_01() {
-	prepare_test "test_027"
+test_032__merge_major_to_master__settings_0_1_01() {
+	prepare_test "test_032"
 	common_major_to_master_0_1
 
 	git checkout master >/dev/null 2>&1
@@ -457,8 +522,8 @@ test_027__merge_major_to_master__settings_0_1_01() {
 	finish_test
 }
 
-test_028__merge_major_to_master__settings_0_1_10() {
-	prepare_test "test_028"
+test_033__merge_major_to_master__settings_0_1_10() {
+	prepare_test "test_033"
 	common_major_to_master_0_1
 
 	git checkout master >/dev/null 2>&1
@@ -471,6 +536,19 @@ test_028__merge_major_to_master__settings_0_1_10() {
 	finish_test
 }
 
+test_034__merge_major_to_master__settings_0_1_11() {
+	prepare_test "test_034"
+	common_major_to_master_0_1
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git merge "$major_version_branch_name" -m 'Merge feature from major to master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.1.0.7")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
 
 common_major_to_master_1_0() {
 	init_git_repo
@@ -480,8 +558,8 @@ common_major_to_master_1_0() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_029__merge_major_to_master__settings_1_0_00() {
-	prepare_test "test_029"
+test_035__merge_major_to_master__settings_1_0_00() {
+	prepare_test "test_035"
 	common_major_to_master_1_0
 
 	git checkout master >/dev/null 2>&1
@@ -494,8 +572,8 @@ test_029__merge_major_to_master__settings_1_0_00() {
 	finish_test
 }
 
-test_030__merge_major_to_master__settings_1_0_01() {
-	prepare_test "test_030"
+test_036__merge_major_to_master__settings_1_0_01() {
+	prepare_test "test_036"
 	common_major_to_master_1_0
 
 	git checkout master >/dev/null 2>&1
@@ -508,8 +586,8 @@ test_030__merge_major_to_master__settings_1_0_01() {
 	finish_test
 }
 
-test_031__merge_major_to_master__settings_1_0_10() {
-	prepare_test "test_031"
+test_037__merge_major_to_master__settings_1_0_10() {
+	prepare_test "test_037"
 	common_major_to_master_1_0
 
 	git checkout master >/dev/null 2>&1
@@ -517,6 +595,20 @@ test_031__merge_major_to_master__settings_1_0_10() {
 	git merge "$major_version_branch_name" -m 'Merge feature from major to master release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.1.1.7")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_038__merge_major_to_master__settings_1_0_11() {
+	prepare_test "test_038"
+	common_major_to_master_1_0
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git merge "$major_version_branch_name" -m 'Merge feature from major to master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.1.0.7")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -531,8 +623,8 @@ common_major_to_master_1_1() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_032__merge_major_to_master__settings_1_1_00() {
-	prepare_test "test_032"
+test_039__merge_major_to_master__settings_1_1_00() {
+	prepare_test "test_039"
 	common_major_to_master_1_1
 
 	git checkout master >/dev/null 2>&1
@@ -544,8 +636,8 @@ test_032__merge_major_to_master__settings_1_1_00() {
 	finish_test
 }
 
-test_033__merge_major_to_master__settings_1_1_01() {
-	prepare_test "test_033"
+test_040__merge_major_to_master__settings_1_1_01() {
+	prepare_test "test_040"
 	common_major_to_master_1_1
 
 	git checkout master >/dev/null 2>&1
@@ -558,8 +650,8 @@ test_033__merge_major_to_master__settings_1_1_01() {
 	finish_test
 }
 
-test_034__merge_major_to_master__settings_1_1_10() {
-	prepare_test "test_034"
+test_041__merge_major_to_master__settings_1_1_10() {
+	prepare_test "test_041"
 	common_major_to_master_1_1
 
 	git checkout master >/dev/null 2>&1
@@ -572,6 +664,19 @@ test_034__merge_major_to_master__settings_1_1_10() {
 	finish_test
 }
 
+test_042__merge_major_to_master__settings_1_1_11() {
+	prepare_test "test_042"
+	common_major_to_master_1_1
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git merge "$major_version_branch_name" -m 'Merge feature from major to master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.1.0.7")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++ Commit on Major ++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -584,8 +689,8 @@ common_major_commit_0_0() {
 	common_buildup
 }
 
-test_035__commit_on_major__settings_0_0_00() {
-	prepare_test "test_035"
+test_043__commit_on_major__settings_0_0_00() {
+	prepare_test "test_043"
 	common_major_commit_0_0
 
 	git commit -m 'Commit feature on major release branch' >/dev/null 2>&1
@@ -596,8 +701,8 @@ test_035__commit_on_major__settings_0_0_00() {
 	finish_test
 }
 
-test_036__commit_on_major__settings_0_0_01() {
-	prepare_test "test_036"
+test_044__commit_on_major__settings_0_0_01() {
+	prepare_test "test_044"
 	common_major_commit_0_0
 
 	git commit -m 'Commit feature on major release branch' --increment >/dev/null 2>&1
@@ -608,13 +713,25 @@ test_036__commit_on_major__settings_0_0_01() {
 	finish_test
 }
 
-test_037__commit_on_major__settings_0_0_10() {
-	prepare_test "test_037"
+test_045__commit_on_major__settings_0_0_10() {
+	prepare_test "test_045"
 	common_major_commit_0_0
 
 	git commit -m 'Commit feature on major release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(assert_equal_string "$(read_version_file)" "0.0.1.3")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_046__commit_on_major__settings_0_0_11() {
+	prepare_test "test_046"
+	common_major_commit_0_0
+
+	git commit -m 'Commit feature on major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.0.3")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -628,8 +745,8 @@ common_major_commit_0_1() {
 	common_buildup
 }
 
-test_038__commit_on_major__settings_0_1_00() {
-	prepare_test "test_038"
+test_047__commit_on_major__settings_0_1_00() {
+	prepare_test "test_047"
 	common_major_commit_0_1
 
 	git commit -m 'Commit feature on major release branch' >/dev/null 2>&1
@@ -639,8 +756,8 @@ test_038__commit_on_major__settings_0_1_00() {
 	finish_test
 }
 
-test_039__commit_on_major__settings_0_1_01() {
-	prepare_test "test_039"
+test_048__commit_on_major__settings_0_1_01() {
+	prepare_test "test_048"
 	common_major_commit_0_1
 
 	git commit -m 'Commit feature on major release branch' --increment >/dev/null 2>&1
@@ -651,8 +768,8 @@ test_039__commit_on_major__settings_0_1_01() {
 	finish_test
 }
 
-test_040__commit_on_major__settings_0_1_10() {
-	prepare_test "test_040"
+test_049__commit_on_major__settings_0_1_10() {
+	prepare_test "test_049"
 	common_major_commit_0_1
 
 	git commit -m 'Commit feature on major release branch' --hotfix >/dev/null 2>&1
@@ -663,6 +780,19 @@ test_040__commit_on_major__settings_0_1_10() {
 	finish_test
 }
 
+test_050__commit_on_major__settings_0_1_11() {
+	prepare_test "test_050"
+	common_major_commit_0_1
+
+	git commit -m 'Commit feature on major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.0.3")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+
 # default_behaviour_on_commit and default_behaviour_on_merge both 1, means major will be incremented if no arg given.
 # commit_and_merge_only_if_increment_or_hotfix_argument_given = 0, means default values will actually be used.
 common_major_commit_1_0() {
@@ -671,8 +801,8 @@ common_major_commit_1_0() {
 	common_buildup
 }
 
-test_041__commit_on_major__settings_1_0_00() {
-	prepare_test "test_041"
+test_051__commit_on_major__settings_1_0_00() {
+	prepare_test "test_051"
 	common_major_commit_1_0
 
 	git commit -m 'Commit feature on major release branch' >/dev/null 2>&1
@@ -683,8 +813,8 @@ test_041__commit_on_major__settings_1_0_00() {
 	finish_test
 }
 
-test_042__commit_on_major__settings_1_0_01() {
-	prepare_test "test_042"
+test_052__commit_on_major__settings_1_0_01() {
+	prepare_test "test_052"
 	common_major_commit_1_0
 
 	git commit -m 'Commit feature on major release branch' --increment >/dev/null 2>&1
@@ -695,13 +825,25 @@ test_042__commit_on_major__settings_1_0_01() {
 	finish_test
 }
 
-test_043__commit_on_major__settings_1_0_10() {
-	prepare_test "test_043"
+test_053__commit_on_major__settings_1_0_10() {
+	prepare_test "test_053"
 	common_major_commit_1_0
 
 	git commit -m 'Commit feature on major release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(assert_equal_string "$(read_version_file)" "0.0.1.3")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_054__commit_on_major__settings_1_0_11() {
+	prepare_test "test_054"
+	common_major_commit_1_0
+
+	git commit -m 'Commit feature on major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.0.3")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -715,8 +857,8 @@ common_major_commit_1_1() {
 	common_buildup
 }
 
-test_044__commit_on_major__settings_1_1_00() {
-	prepare_test "test_044"
+test_055__commit_on_major__settings_1_1_00() {
+	prepare_test "test_055"
 	common_major_commit_1_1
 
 	git commit -m 'Commit feature on major release branch' >/dev/null 2>&1
@@ -726,8 +868,8 @@ test_044__commit_on_major__settings_1_1_00() {
 	finish_test
 }
 
-test_045__commit_on_major__settings_1_1_01() {
-	prepare_test "test_045"
+test_056__commit_on_major__settings_1_1_01() {
+	prepare_test "test_056"
 	common_major_commit_1_1
 
 	git commit -m 'Commit feature on major release branch' --increment >/dev/null 2>&1
@@ -738,13 +880,25 @@ test_045__commit_on_major__settings_1_1_01() {
 	finish_test
 }
 
-test_046__commit_on_major__settings_1_1_10() {
-	prepare_test "test_046"
+test_057__commit_on_major__settings_1_1_10() {
+	prepare_test "test_057"
 	common_major_commit_1_1
 
 	git commit -m 'Commit feature on major release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(assert_equal_string "$(read_version_file)" "0.0.1.3")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_058__commit_on_major__settings_1_1_11() {
+	prepare_test "test_058"
+	common_major_commit_1_1
+
+	git commit -m 'Commit feature on major release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(assert_equal_string "$(read_version_file)" "0.0.0.3")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -761,8 +915,8 @@ common_master_commit_0_0() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_047__commit_on_master__settings_0_0_00() {
-	prepare_test "test_047"
+test_059__commit_on_master__settings_0_0_00() {
+	prepare_test "test_059"
 	common_master_commit_0_0
 
 	git checkout master >/dev/null 2>&1
@@ -775,8 +929,8 @@ test_047__commit_on_master__settings_0_0_00() {
 	finish_test
 }
 
-test_048__commit_on_master__settings_0_0_01() {
-	prepare_test "test_048"
+test_060__commit_on_master__settings_0_0_01() {
+	prepare_test "test_060"
 	common_master_commit_0_0
 
 	git checkout master >/dev/null 2>&1
@@ -789,8 +943,8 @@ test_048__commit_on_master__settings_0_0_01() {
 	finish_test
 }
 
-test_049__commit_on_master__settings_0_0_10() {
-	prepare_test "test_049"
+test_061__commit_on_master__settings_0_0_10() {
+	prepare_test "test_061"
 	common_master_commit_0_0
 
 	git checkout master >/dev/null 2>&1
@@ -798,6 +952,20 @@ test_049__commit_on_master__settings_0_0_10() {
 	git commit -m 'Commit feature on master release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.1.2")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_062__commit_on_master__settings_0_0_11() {
+	prepare_test "test_062"
+	common_master_commit_0_0
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git commit -m 'Commit feature on master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.0.2")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -812,8 +980,8 @@ common_master_commit_0_1() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_050__commit_on_master__settings_0_1_00() {
-	prepare_test "test_050"
+test_063__commit_on_master__settings_0_1_00() {
+	prepare_test "test_063"
 	common_master_commit_0_1
 
 	git commit -m 'Commit feature on master release branch' >/dev/null 2>&1
@@ -823,8 +991,8 @@ test_050__commit_on_master__settings_0_1_00() {
 	finish_test
 }
 
-test_051__commit_on_master__settings_0_1_01() {
-	prepare_test "test_051"
+test_064__commit_on_master__settings_0_1_01() {
+	prepare_test "test_064"
 	common_master_commit_0_1
 
 	git checkout master >/dev/null 2>&1
@@ -837,8 +1005,8 @@ test_051__commit_on_master__settings_0_1_01() {
 	finish_test
 }
 
-test_052__commit_on_master__settings_0_1_10() {
-	prepare_test "test_052"
+test_065__commit_on_master__settings_0_1_10() {
+	prepare_test "test_065"
 	common_master_commit_0_1
 
 	git checkout master >/dev/null 2>&1
@@ -846,6 +1014,20 @@ test_052__commit_on_master__settings_0_1_10() {
 	git commit -m 'Commit feature on master release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.1.2")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_066__commit_on_master__settings_0_1_11() {
+	prepare_test "test_066"
+	common_master_commit_0_1
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git commit -m 'Commit feature on master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.0.2")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -860,8 +1042,8 @@ common_master_commit_1_0() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_053__commit_on_master__settings_1_0_00() {
-	prepare_test "test_053"
+test_067__commit_on_master__settings_1_0_00() {
+	prepare_test "test_067"
 	common_master_commit_1_0
 
 	git checkout master >/dev/null 2>&1
@@ -874,8 +1056,8 @@ test_053__commit_on_master__settings_1_0_00() {
 	finish_test
 }
 
-test_054__commit_on_master__settings_1_0_01() {
-	prepare_test "test_054"
+test_068__commit_on_master__settings_1_0_01() {
+	prepare_test "test_068"
 	common_master_commit_1_0
 
 	git checkout master >/dev/null 2>&1
@@ -888,8 +1070,8 @@ test_054__commit_on_master__settings_1_0_01() {
 	finish_test
 }
 
-test_055__commit_on_master__settings_1_0_10() {
-	prepare_test "test_055"
+test_069__commit_on_master__settings_1_0_10() {
+	prepare_test "test_069"
 	common_master_commit_1_0
 
 	git checkout master >/dev/null 2>&1
@@ -897,6 +1079,20 @@ test_055__commit_on_master__settings_1_0_10() {
 	git commit -m 'Commit feature on master release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.1.2")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_070__commit_on_master__settings_1_0_11() {
+	prepare_test "test_070"
+	common_master_commit_1_0
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git commit -m 'Commit feature on master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.0.2")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -911,8 +1107,8 @@ common_master_commit_1_1() {
 	result=$(strict_assert_zero $? "$test_name")
 }
 
-test_056__commit_on_master__settings_1_1_00() {
-	prepare_test "test_056"
+test_071__commit_on_master__settings_1_1_00() {
+	prepare_test "test_071"
 	common_master_commit_1_1
 
 	git checkout master >/dev/null 2>&1
@@ -924,8 +1120,8 @@ test_056__commit_on_master__settings_1_1_00() {
 	finish_test
 }
 
-test_057__commit_on_master__settings_1_1_01() {
-	prepare_test "test_057"
+test_072__commit_on_master__settings_1_1_01() {
+	prepare_test "test_072"
 	common_master_commit_1_1
 
 	git checkout master >/dev/null 2>&1
@@ -938,8 +1134,8 @@ test_057__commit_on_master__settings_1_1_01() {
 	finish_test
 }
 
-test_058__commit_on_master__settings_1_1_10() {
-	prepare_test "test_058"
+test_073__commit_on_master__settings_1_1_10() {
+	prepare_test "test_073"
 	common_master_commit_1_1
 
 	git checkout master >/dev/null 2>&1
@@ -947,6 +1143,20 @@ test_058__commit_on_master__settings_1_1_10() {
 	git commit -m 'Commit feature on master release branch' --hotfix >/dev/null 2>&1
 	result=$(strict_assert_zero $? "$test_name")
 	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.1.2")
+
+	print_test_result "$test_name" "$result"
+	finish_test
+}
+
+test_074__commit_on_master__settings_1_1_11() {
+	prepare_test "test_074"
+	common_master_commit_1_1
+
+	git checkout master >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	git commit -m 'Commit feature on master release branch' --no-increment >/dev/null 2>&1
+	result=$(strict_assert_zero $? "$test_name")
+	result=$(strict_assert_equal_string "$(read_version_file)" "0.0.0.2")
 
 	print_test_result "$test_name" "$result"
 	finish_test
@@ -972,60 +1182,76 @@ run_merge_minor_to_major_tests() {
 	test_011__merge_minor_to_major__settings_0_0_00
 	test_012__merge_minor_to_major__settings_0_0_01
 	test_013__merge_minor_to_major__settings_0_0_10
-	test_014__merge_minor_to_major__settings_0_1_00
-	test_015__merge_minor_to_major__settings_0_1_01
-	test_016__merge_minor_to_major__settings_0_1_10
-	test_017__merge_minor_to_major__settings_1_0_00
-	test_018__merge_minor_to_major__settings_1_0_01
-	test_019__merge_minor_to_major__settings_1_0_10
-	test_020__merge_minor_to_major__settings_1_1_00
-	test_021__merge_minor_to_major__settings_1_1_01
-	test_022__merge_minor_to_major__settings_1_1_10
+	test_014__merge_minor_to_major__settings_0_0_11
+	test_015__merge_minor_to_major__settings_0_1_00
+	test_016__merge_minor_to_major__settings_0_1_01
+	test_017__merge_minor_to_major__settings_0_1_10
+	test_018__merge_minor_to_major__settings_0_1_11
+	test_019__merge_minor_to_major__settings_1_0_00
+	test_020__merge_minor_to_major__settings_1_0_01
+	test_021__merge_minor_to_major__settings_1_0_10
+	test_022__merge_minor_to_major__settings_1_0_11
+	test_023__merge_minor_to_major__settings_1_1_00
+	test_024__merge_minor_to_major__settings_1_1_01
+	test_025__merge_minor_to_major__settings_1_1_10
+	test_026__merge_minor_to_major__settings_1_1_11
 }
 
 run_merge_major_to_master_tests() {
-	test_023__merge_major_to_master__settings_0_0_00
-	test_024__merge_major_to_master__settings_0_0_01
-	test_025__merge_major_to_master__settings_0_0_10
-	test_026__merge_major_to_master__settings_0_1_00
-	test_027__merge_major_to_master__settings_0_1_01
-	test_028__merge_major_to_master__settings_0_1_10
-	test_029__merge_major_to_master__settings_1_0_00
-	test_030__merge_major_to_master__settings_1_0_01
-	test_031__merge_major_to_master__settings_1_0_10
-	test_032__merge_major_to_master__settings_1_1_00
-	test_033__merge_major_to_master__settings_1_1_01
-	test_034__merge_major_to_master__settings_1_1_10
+	test_027__merge_major_to_master__settings_0_0_00
+	test_028__merge_major_to_master__settings_0_0_01
+	test_029__merge_major_to_master__settings_0_0_10
+	test_030__merge_major_to_master__settings_0_0_11
+	test_031__merge_major_to_master__settings_0_1_00
+	test_032__merge_major_to_master__settings_0_1_01
+	test_033__merge_major_to_master__settings_0_1_10
+	test_034__merge_major_to_master__settings_0_1_11
+	test_035__merge_major_to_master__settings_1_0_00
+	test_036__merge_major_to_master__settings_1_0_01
+	test_037__merge_major_to_master__settings_1_0_10
+	test_038__merge_major_to_master__settings_1_0_11
+	test_039__merge_major_to_master__settings_1_1_00
+	test_040__merge_major_to_master__settings_1_1_01
+	test_041__merge_major_to_master__settings_1_1_10
+	test_042__merge_major_to_master__settings_1_1_11
 }
 
 run_commit_on_major_tests() {
-	test_035__commit_on_major__settings_0_0_00
-	test_036__commit_on_major__settings_0_0_01
-	test_037__commit_on_major__settings_0_0_10
-	test_038__commit_on_major__settings_0_1_00
-	test_039__commit_on_major__settings_0_1_01
-	test_040__commit_on_major__settings_0_1_10
-	test_041__commit_on_major__settings_1_0_00
-	test_042__commit_on_major__settings_1_0_01
-	test_043__commit_on_major__settings_1_0_10
-	test_044__commit_on_major__settings_1_1_00
-	test_045__commit_on_major__settings_1_1_01
-	test_046__commit_on_major__settings_1_1_10
+	test_043__commit_on_major__settings_0_0_00
+	test_044__commit_on_major__settings_0_0_01
+	test_045__commit_on_major__settings_0_0_10
+	test_046__commit_on_major__settings_0_0_11
+	test_047__commit_on_major__settings_0_1_00
+	test_048__commit_on_major__settings_0_1_01
+	test_049__commit_on_major__settings_0_1_10
+	test_050__commit_on_major__settings_0_1_11
+	test_051__commit_on_major__settings_1_0_00
+	test_052__commit_on_major__settings_1_0_01
+	test_053__commit_on_major__settings_1_0_10
+	test_054__commit_on_major__settings_1_0_11
+	test_055__commit_on_major__settings_1_1_00
+	test_056__commit_on_major__settings_1_1_01
+	test_057__commit_on_major__settings_1_1_10
+	test_058__commit_on_major__settings_1_1_11
 }
 
 run_commit_on_master_tests() {
-	test_047__commit_on_master__settings_0_0_00
-	test_048__commit_on_master__settings_0_0_01
-	test_049__commit_on_master__settings_0_0_10
-	test_050__commit_on_master__settings_0_1_00
-	test_051__commit_on_master__settings_0_1_01
-	test_052__commit_on_master__settings_0_1_10
-	test_053__commit_on_master__settings_1_0_00
-	test_054__commit_on_master__settings_1_0_01
-	test_055__commit_on_master__settings_1_0_10
-	test_056__commit_on_master__settings_1_1_00
-	test_057__commit_on_master__settings_1_1_01
-	test_058__commit_on_master__settings_1_1_10
+	test_059__commit_on_master__settings_0_0_00
+	test_060__commit_on_master__settings_0_0_01
+	test_061__commit_on_master__settings_0_0_10
+	test_062__commit_on_master__settings_0_0_11
+	test_063__commit_on_master__settings_0_1_00
+	test_064__commit_on_master__settings_0_1_01
+	test_065__commit_on_master__settings_0_1_10
+	test_066__commit_on_master__settings_0_1_11
+	test_067__commit_on_master__settings_1_0_00
+	test_068__commit_on_master__settings_1_0_01
+	test_069__commit_on_master__settings_1_0_10
+	test_070__commit_on_master__settings_1_0_11
+	test_071__commit_on_master__settings_1_1_00
+	test_072__commit_on_master__settings_1_1_01
+	test_073__commit_on_master__settings_1_1_10
+	test_074__commit_on_master__settings_1_1_11
 }
 
 run_all_tests() {
