@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 this_script_path=$(readlink -f "$0")
@@ -10,10 +10,37 @@ assert_increment_arg_given() {
 	if [ "$branch_name" == "$master_version_branch_name" -o "$branch_name" == "$major_version_branch_name" ]; then
 		if [ "$versioning_arg" == "" -a $commit_and_merge_only_if_increment_or_hotfix_argument_given -eq 1 ]; then
 			echo "If you want to commit or merge to the $master_version_branch_name or $major_version_branch_name branches,"
-			echo "you need to append \"--increment\" or \"--hotfix\" to the end of your git-command (after the git arguments)."
+			echo "you need to append \"--increment\", \"--hotfix\" or \"--no-increment\" to the end of your git-command (after the git arguments)."
 			exit 1;
 		fi
 	fi
+}
+
+correct_args() {
+	result=""
+	for i
+	do
+		whitespace_check=$(echo "$i" | sed -rne "s~(([[:graph:]]* [[:graph:]]*)+)~\1~p")
+		if [ "$whitespace_check" == "" ]; then
+			result="$result $i"
+		else
+			result="$result '$i'"
+		fi
+	done
+	echo "$result"
+}
+
+get_other_branch_name() {
+	#log "Get-other-branch-name: args are: $@"
+	corrected_args=$(correct_args "$@")
+	#corrected_args="$@"
+	branchname=$(echo "$corrected_args" | sed -rne "s~merge((\s(-(S|(s|m|X)\s)('[[:print:]]+'|[[:graph:]]+)|(--[[:graph:]]+(=[[:graph:]]+)?|-n|-e|-q|-v|-S)))*\s)([[:graph:]]+)(\s(-(S|(s|m|X)\s)('[[:print:]]+'|[[:graph:]]+)|(--[[:graph:]]+(=[[:graph:]]+)?|-n|-e|-q|-v|-S)))*~\9~p")
+	branchname=$(echo "$branchname" | sed -re "s~^ *~~g")
+	if [ "$branchname" == "" ]; then
+		echo ""
+		return 1
+	fi
+	echo "$branchname"
 }
 
 get_branch_name() {
@@ -33,13 +60,20 @@ pre_git() {
 	result=0
 
 	if [ "$1" == "merge" ]; then
-		get_branch_name_and_assert_increment_arg
-		"${path_to_this_dir}/versioning_tool_pre_merge.sh" "$@"
+		t=$(get_other_branch_name "$@")
+		if [ "$t" != "" ]; then
+			get_branch_name_and_assert_increment_arg
+			"${path_to_this_dir}/versioning_tool_pre_merge.sh" "$@"
+			result=$?
+		fi
 	elif [ "$1" == "commit" ]; then
 		get_branch_name_and_assert_increment_arg
 		"${path_to_this_dir}/versioning_tool_pre_commit.sh" "$@"
+		result=$?
+	elif [ "$1" == "pull" ]; then
+		touch "${path_to_this_dir}/../pull"
 	fi
-	result=$?
+	
 	# add other hooks here #
 	#...
 
@@ -50,13 +84,16 @@ pre_git() {
 	fi
 }
 
+# Flags for special case of git pull and for increment-decision
 rm "${path_to_this_dir}/../--increment" 2>/dev/null
 rm "${path_to_this_dir}/../--hotfix" 2>/dev/null
+rm "${path_to_this_dir}/../--no-increment" 2>/dev/null
+rm "${path_to_this_dir}/../pull" 2>/dev/null
 
 for i
 do
 	shift
-	if [ "$i" == "--increment" -o "$i" == "--hotfix" ]; then
+	if [ "$i" == "--increment" -o "$i" == "--hotfix" -o "$i" == "--no-increment" ]; then
 		versioning_arg="$i"
 	else
 		set -- "$@" "$i"
@@ -71,3 +108,11 @@ pre_git "$@"
 final_result=$?
 rm "${path_to_this_dir}/../$versioning_arg" 2>/dev/null
 exit $final_result
+
+# TODO: think about different usages of git commit and git merge:
+# git commit --amend might be one, or git merge --abort: WHAT should happen in
+# such cases??  Now we don't handle that. We just are about to handle 
+# normal merges with the versioning tool. Also normal commits. We want to
+# ignore special cases NOW. But we should care about special cases!
+
+
