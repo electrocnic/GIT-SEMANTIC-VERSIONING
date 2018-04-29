@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This is an example how you can invoke the versioning-tool with a single additional line in your own post-merge script:
 #
@@ -8,10 +8,6 @@
 # Is only called by git after a successful merge without conflicts!!! (Post-Commit and Pre-Merge will care about that)
 .git/hooks/versioning_tool_post_merge.sh "$@"
 
-<<<<<<< Updated upstream
-# ... your own stuff ...
-=======
 
 # ... your own stuff ...
 
->>>>>>> Stashed changes

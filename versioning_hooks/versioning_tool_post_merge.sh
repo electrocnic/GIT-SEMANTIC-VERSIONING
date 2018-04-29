@@ -49,3 +49,4 @@ rm ".git/merging"
 
 # Delete backup file as commit was successful:
 delete_file "${backup_file}"
+

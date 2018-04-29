@@ -116,3 +116,12 @@ exit $final_result
 # ignore special cases NOW. But we should care about special cases!
 
 
+
+# !!!!  TODO   !!!!
+# Debug: warum werden offenbar die source anweisungen ned richtig ausgefuehrt?
+# jedenfalls werden die auf dev/null geleitet weshalb man die ausgabe dazu ned sieht.
+# und jedenfalls konnten keine funktionen aus der util.sh gefunden werden.
+# soll heissen: FIX THAT SHIT YOU LAZY CUNT!!!
+
+
+
