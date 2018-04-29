@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 this_script_path=$(readlink -f "$0")
 path_to_this_dir=$(dirname "$this_script_path")

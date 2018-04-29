@@ -1,13 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This is an example how you can invoke the versioning-tool with a single additional line in your own post-commit script:
 #
 
 # ... your own stuff ...
-
-if [ -f ".git/hooks-disabled" ]; then
-	exit 0
-fi
 
 .git/hooks/versioning_tool_post_commit.sh
 

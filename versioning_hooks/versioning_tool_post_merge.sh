@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Call this shell script from within git's post-merge file.
 #
@@ -24,6 +24,10 @@ prepare_new_merge_message() {
 }
 
 # ---------------------- Start ---------------------- #
+if [ -e "${path_to_this_dir}/../pull" ]; then
+	rm "${path_to_this_dir}/../pull" 2>/dev/null
+	exit 0
+fi
 
 disable_hooks
 # read version file
@@ -45,3 +49,4 @@ rm ".git/merging"
 
 # Delete backup file as commit was successful:
 delete_file "${backup_file}"
+
