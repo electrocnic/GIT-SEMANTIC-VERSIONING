@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Call this shell script from within git's post-merge file.
 #

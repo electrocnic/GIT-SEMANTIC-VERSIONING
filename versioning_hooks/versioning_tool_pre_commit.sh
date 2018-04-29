@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Call this shell script from within git's pre-commit file.
 # Simply do .git/hooks/versioning_tool_pre_commit.sh inside pre-commit
