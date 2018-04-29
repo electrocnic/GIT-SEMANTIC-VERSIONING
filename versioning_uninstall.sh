@@ -54,7 +54,7 @@ uninstall_scripts_in_repo() {
                 echo "Could not find a git repository. No need to uninstall scripts."
         else
 		# remove versioning-hook in post-commit:
-                result=$(sed -i '\~\.git/hooks/versioning_tool_post_commit\.sh~d' "${full_path_to_hook}/.git/hooks/post-commit" 2>&1)
+		result=$(sed -i '\~\.git/hooks/versioning_tool_post_commit\.sh~d' "${full_path_to_hook}/.git/hooks/post-commit" 2>&1)
 		print_notification "post-commit" "$result"
 
 		# remove versioning-hook in post-merge:

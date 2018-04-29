@@ -43,10 +43,10 @@ correct_args() {
 
 get_other_branch_name() {
 	#log "Get-other-branch-name: args are: $@"
-	corrected_args=$(correct_args "$@")  #TODO: check why this doesnot works any more?!
+	corrected_args=$(correct_args "$@")
 	#corrected_args="$@"
 	branchname=$(echo "$corrected_args" | sed -rne "s~merge((\s(-(S|(s|m|X)\s)('[[:print:]]+'|[[:graph:]]+)|(--[[:graph:]]+(=[[:graph:]]+)?|-n|-e|-q|-v|-S)))*\s)([[:graph:]]+)(\s(-(S|(s|m|X)\s)('[[:print:]]+'|[[:graph:]]+)|(--[[:graph:]]+(=[[:graph:]]+)?|-n|-e|-q|-v|-S)))*~\9~p")
-	branchname=$(echo "$branchname" | sed -re "s~^ *~~g") #TODO: check why dis is still wrong after all those changes??!!
+	branchname=$(echo "$branchname" | sed -re "s~^ *~~g")
 	if [ "$branchname" == "" ]; then
 		echo ""
 		return 1

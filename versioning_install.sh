@@ -16,7 +16,7 @@ git() {
 }
 
 generate_git_pre_merge_hook_file() {
-	printf "#!/bin/bash\n#\n\nfind_and_invoke_pre_git_hook() {\n\tfull_path_to_hook=\$(\git rev-parse --show-toplevel 2>/dev/null)\n\tif [ \"\$full_path_to_hook\" == \"\" ]; then\n\t\techo \"Git-Wrapper: Could not find a git repository. Invoking command directly.\"\n\t\t\\git \"\$@\"\n\telse\n\t\t\"\${full_path_to_hook}/.git/hooks/pre-git\" \"\$@\"\n\tfi\n}\n\nfind_and_invoke_pre_git_hook \"\$@\"\n" > "$git_wrapper_file"
+	printf "#!/bin/bash\n#\n\nfind_and_invoke_pre_git_hook() {\n\tfull_path_to_hook=\$(\git rev-parse --show-toplevel 2>/dev/null)\n\tif [ \"\$full_path_to_hook\" == \"\" ]; then\n\t\techo \"Git-Wrapper: Could not find a git repository. Invoking command directly.\"\n\t\t\\git \"\$@\"\n\telif [ -e \"\${full_path_to_hook}/.git/hooks/pre-git\" ]; then\n\t\t\"\${full_path_to_hook}/.git/hooks/pre-git\" \"\$@\"\n\telse\n\t\techo \"Git-Wrapper: Versioning-Tool not installed to this git repository. Invoking command directly.\"\n\t\t\git \"\$@\"\n\tfi\n}\n\nfind_and_invoke_pre_git_hook \"\$@\"\n" > "$git_wrapper_file"
 }
 
 add_alias_unless_existing_for_pre_merge_hook() {
@@ -43,7 +43,26 @@ remove_old_hooks() {
 }
 
 install_new_hooks() {
-	cp versioning_hooks/* .git/hooks/ >/dev/null 2>&1
+	cp versioning_hooks/versioning_tool_* .git/hooks/ >/dev/null 2>&1
+
+	# post-commit
+	result=$(grep '.git/hooks/versioning_tool_post_commit.sh' ".git/hooks/post-commit")
+	if [ "$result" == "" ]; then
+		printf "\n%s\n" ".git/hooks/versioning_tool_post_commit.sh" >> ".git/hooks/post-commit"
+	fi
+
+	# post-merge
+	result=$(grep '.git/hooks/versioning_tool_post_merge.sh' ".git/hooks/post-merge")
+	if [ "$result" == "" ]; then
+		printf "\n%s\n" '.git/hooks/versioning_tool_post_merge.sh "$@"' >> ".git/hooks/post-merge"
+	fi
+
+	# prepare-commit-msg
+	result=$(grep '.git/hooks/versioning_tool_prepare_commit_msg.sh' ".git/hooks/prepare-commit-msg")
+	if [ "$result" == "" ]; then
+		printf "\n%s\n" '.git/hooks/versioning_tool_prepare_commit_msg.sh "$1"' >> ".git/hooks/prepare-commit-msg"
+	fi
+
 	chmod 755 .git/hooks/*
 }
 

@@ -12,6 +12,10 @@ source "${path_to_this_dir}/versioning_tool_util.sh" 2>/dev/null
 
 log "versioning_tool_prepare_commit_msg.sh: Adding version to commit message."
 
+if [ -f ".git/hooks-disabled" ]; then
+	exit 0
+fi
+
 if [ "$1" = ".git/MERGE_MSG" ]; then
 	log "MERGE! calling versioning_tool_pre_commit.sh from within versioning_tool_prepare_commit_msg.sh"
 	.git/hooks/versioning_tool_pre_commit.sh "merge"

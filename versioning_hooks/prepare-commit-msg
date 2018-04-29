@@ -5,10 +5,6 @@
 
 # ... your own stuff ...
 
-if [ -f ".git/hooks-disabled" ]; then
-	exit 0
-fi
-
 .git/hooks/versioning_tool_prepare_commit_msg.sh "$1"
 
 # ... your own stuff ...
