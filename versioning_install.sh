@@ -46,21 +46,21 @@ install_new_hooks() {
 	cp versioning_hooks/versioning_tool_* .git/hooks/ >/dev/null 2>&1
 
 	# post-commit
-	result=$(grep '.git/hooks/versioning_tool_post_commit.sh' "${full_path_to_hook}/.git/hooks/post-commit")
+	result=$(grep '.git/hooks/versioning_tool_post_commit.sh' ".git/hooks/post-commit")
 	if [ "$result" == "" ]; then
-		printf "\n%s\n" ".git/hooks/versioning_tool_post_commit.sh" >> "${full_path_to_hook}/.git/hooks/post-commit"
+		printf "\n%s\n" ".git/hooks/versioning_tool_post_commit.sh" >> ".git/hooks/post-commit"
 	fi
 
 	# post-merge
-	result=$(grep '.git/hooks/versioning_tool_post_merge.sh' "${full_path_to_hook}/.git/hooks/post-merge")
+	result=$(grep '.git/hooks/versioning_tool_post_merge.sh' ".git/hooks/post-merge")
 	if [ "$result" == "" ]; then
-		printf "\n%s\n" '.git/hooks/versioning_tool_post_merge.sh "$@"' >> "${full_path_to_hook}/.git/hooks/post-merge"
+		printf "\n%s\n" '.git/hooks/versioning_tool_post_merge.sh "$@"' >> ".git/hooks/post-merge"
 	fi
 
 	# prepare-commit-msg
-	result=$(grep '.git/hooks/versioning_tool_prepare_commit_msg.sh' "${full_path_to_hook}/.git/hooks/prepare-commit-msg")
+	result=$(grep '.git/hooks/versioning_tool_prepare_commit_msg.sh' ".git/hooks/prepare-commit-msg")
 	if [ "$result" == "" ]; then
-		printf "\n%s\n" '.git/hooks/versioning_tool_prepare_commit_msg.sh "$1"' >> "${full_path_to_hook}/.git/hooks/prepare-commit-msg"
+		printf "\n%s\n" '.git/hooks/versioning_tool_prepare_commit_msg.sh "$1"' >> ".git/hooks/prepare-commit-msg"
 	fi
 
 	chmod 755 .git/hooks/*
