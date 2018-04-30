@@ -164,7 +164,7 @@ resolve_minor_increment() {
 }
 
 resolve_increment_master_major_minor() {
-	if [ "$branch_name" = "$minor_version_branch_name" ]; then
+	if [ "$branch_name" = "$minor_version_branch_name" ] && [ "$versioning_arg" != "--no-increment" ]; then
 		resolve_minor_increment
 	elif [ "$branch_name" = "$master_version_branch_name" -o "$branch_name" = "$major_version_branch_name" ]; then
 		resolve_increment
