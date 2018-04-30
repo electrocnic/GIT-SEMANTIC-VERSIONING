@@ -13,6 +13,8 @@ source "${path_to_this_dir}/versioning_tool_util.sh" 2>/dev/null
 
 log "versioning_tool_pre_commit.sh: Calculating new version"
 
+versioning_arg=""
+
 parse_master_major_minor_buildup() {
 	# only if both, m and d are 1, the next commit on d will increment d.
 	# if m is 1 but d is 0, the next commit should fail.
