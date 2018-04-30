@@ -10,7 +10,15 @@ assert_increment_arg_given() {
 	if [ "$branch_name" == "$master_version_branch_name" -o "$branch_name" == "$major_version_branch_name" ]; then
 		if [ "$versioning_arg" == "" -a $commit_and_merge_only_if_increment_or_hotfix_argument_given -eq 1 ]; then
 			echo "If you want to commit or merge to the $master_version_branch_name or $major_version_branch_name branches,"
-			echo "you need to append \"--increment\", \"--hotfix\" or \"--no-increment\" to the end of your git-command (after the git arguments)."
+			echo "you need to append \"--increment\", \"--hotfix\" or \"--no-increment\""
+			echo "to the end of your git-command (after the git arguments)."
+			exit 1;
+		fi
+	elif [ "$branch_name" == "$minor_version_branch_name" ]; then
+		if [ "$versioning_arg" == "" -a $commit_and_merge_only_if_increment_or_hotfix_argument_given -eq 1 ]; then
+			echo "If you want to commit or merge to the $minor_version_branch_name branch,"
+			echo "you need to append \"--increment\" (which also means \"hotfix\" in this case) or \"--no-increment\""
+			echo "to the end of your git-command (after the git arguments)." 
 			exit 1;
 		fi
 	fi
