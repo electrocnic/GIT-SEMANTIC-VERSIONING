@@ -44,6 +44,12 @@ Merge changes: Will check which branch has the greater version, then, will incre
 11. When you think you have a major release, checkout the major branch and merge the minor branch into the major branch.
 12. Same goes for master from major if the release is really huge.
 
+Note: If you do not want to increment at all on a merge, for example, if you want to merge the latest hotfixes of a major branch back to minor,
+to have the latest state on minor as well, you really do not want to increment the version at all, then append --no-increment to the end of
+the merge statement. (E.g. "git merge major -m 'Merge message' --no-increment")
+Similar for hotfixes on a branch directly: You do not want to increment the master or major version because it is just a hotfix, but you
+need to increment the minor version? Appen --hotfix (E.g. git commit -m 'Commit message' --hotfix).
+
 ## On a Linux-Based OS: ##
 
 If the scripts fail at the first attempt due to permissions:
