@@ -44,7 +44,7 @@ Merge changes: Will check which branch has the greater version, then, will incre
 11. When you think you have a major release, checkout the major branch and merge the minor branch into the major branch.
 12. Same goes for master from major if the release is really huge.
 
-# On a Linux-Based OS: #
+## On a Linux-Based OS: ##
 
 If the scripts fail at the first attempt due to permissions:
 Try to `chmod 755 versioning_install.sh`. If it does not work:
@@ -70,7 +70,7 @@ Feel free to make a pull request and contribute to this project if you have got 
 BTW: To better understand the tool, studying the tests can help a lot!
 
 
-# Fix git prompt in terminal #
+## Fix git prompt in terminal ##
 
 Add the following function somewhere in your bashrc ABOVE the line where the PS1 is being set:
 ```
