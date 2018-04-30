@@ -131,6 +131,14 @@ master_major_increment() {
 	fi
 }
 
+resolve_minor_increment() {
+        log "...increment_version minor-branch"
+	if [ "$versioning_arg" != "--no-increment" ]; then
+		new_minor="$((minor+1))"
+	fi
+        log "Incrementing minor_version from ${minor} to ${new_minor}"
+}
+
 resolve_increment() {
 	if [ -e ".git/--increment" ]; then
 		versioning_arg="--increment"
@@ -144,27 +152,21 @@ resolve_increment() {
 	log "resolve_increment: Git_operation=\"$git_operation\", versioning_arg=\"$versioning_arg\", default_behaviour_on_commit=\"$default_behaviour_on_commit\", default_behaviour_on_merge=\"$default_behaviour_on_merge\""
 	if [ "$git_operation" == "commit" ]; then
 		if [ "$versioning_arg" == "--hotfix" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_commit -eq 0 ]; then
-			new_minor="$((minor+1))"
+			resolve_minor_increment
 		elif [ "$versioning_arg" == "--increment" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_commit -eq 1 ]; then
 			master_major_increment
 		fi
 	elif [ "$git_operation" == "merge" ]; then
 		if [ "$versioning_arg" == "--hotfix" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_merge -eq 0 ]; then
-			new_minor="$((minor+1))"
+			resolve_minor_increment
 		elif [ "$versioning_arg" == "--increment" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_merge -eq 1 ]; then
 			master_major_increment
 		fi
 	fi
 }
 
-resolve_minor_increment() {
-	log "...increment_version minor-branch"
-	new_minor="$((minor+1))"
-	log "Incrementing minor_version from ${minor} to ${new_minor}"
-}
-
 resolve_increment_master_major_minor() {
-	if [ "$branch_name" = "$minor_version_branch_name" ] && [ "$versioning_arg" != "--no-increment" ]; then
+	if [ "$branch_name" = "$minor_version_branch_name" ]; then
 		resolve_minor_increment
 	elif [ "$branch_name" = "$master_version_branch_name" -o "$branch_name" = "$major_version_branch_name" ]; then
 		resolve_increment
