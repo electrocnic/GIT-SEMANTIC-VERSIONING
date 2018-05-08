@@ -59,6 +59,18 @@ set_current_commit_count() {
 	log "Commit count: ${commit_count}"
 }
 
+get_versioning_arg() {
+	if [ -e ".git/--increment" ]; then
+		versioning_arg="--increment"
+	elif [ -e ".git/--hotfix" ]; then
+		versioning_arg="--hotfix"
+	elif [ -e ".git/--no-increment" ]; then
+		versioning_arg="--no-increment"
+	else
+		versioning_arg=""
+	fi
+}
+
 initialize() {
 	log "initialize."
 	branch_name=$(get_branch_name)
@@ -68,6 +80,7 @@ initialize() {
 	state_common=0
 	read_buildup_file_if_exists_and_parse_m_m_m
 	read_version_file_if_exists_and_parse_m_m_m_c
+	get_versioning_arg
 }
 
 delete_buildup_file() {
@@ -134,23 +147,14 @@ master_major_increment() {
 }
 
 resolve_minor_increment() {
-        log "...increment_version minor-branch"
+	log "...increment_version minor-branch"
 	if [ "$versioning_arg" != "--no-increment" ]; then
 		new_minor="$((minor+1))"
 	fi
-        log "Incrementing minor_version from ${minor} to ${new_minor}"
+	log "Incrementing minor_version from ${minor} to ${new_minor}"
 }
 
 resolve_increment() {
-	if [ -e ".git/--increment" ]; then
-		versioning_arg="--increment"
-	elif [ -e ".git/--hotfix" ]; then
-		versioning_arg="--hotfix"
-	elif [ -e ".git/--no-increment" ]; then
-		versioning_arg="--no-increment"
-	else
-		versioning_arg=""
-	fi
 	log "resolve_increment: Git_operation=\"$git_operation\", versioning_arg=\"$versioning_arg\", default_behaviour_on_commit=\"$default_behaviour_on_commit\", default_behaviour_on_merge=\"$default_behaviour_on_merge\""
 	if [ "$git_operation" == "commit" ]; then
 		if [ "$versioning_arg" == "--hotfix" ] || [ "$versioning_arg" == "" -a $default_behaviour_on_commit -eq 0 ]; then
