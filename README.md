@@ -6,7 +6,7 @@ This tool should not be used for production work, rather use it on your personal
 
 ## The install script does following! ##
 - Make a new git repository in the current folder!
-- Copy the files of versioning_hooks/ into .git/hooks/... and delete the sample hooks in the git repository.
+- Copy the files of `ersioning_hooks/` into .git/hooks/... and delete the sample hooks in the git repository.
 - Add an alias to "git" to the ~/.bashrc file, if not already exists.
 
 ## The tests.sh script does following! ##
