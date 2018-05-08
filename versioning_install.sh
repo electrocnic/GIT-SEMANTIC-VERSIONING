@@ -47,24 +47,36 @@ install_new_hooks() {
 	cp versioning_hooks/pre-git .git/hooks/ >/dev/null 2>&1
 
 	full_path_to_hook=$(\git rev-parse --show-toplevel 2>/dev/null)
-        if [ "$full_path_to_hook" == "" ]; then
-                echo "Could not find a git repository. Cannot install scripts. This is an indicator that something went wrong in this script."
-        else
+	if [ "$full_path_to_hook" == "" ]; then
+		echo "Could not find a git repository. Cannot install scripts. This is an indicator that something went wrong in this script."
+	else
 		# post-commit
 		result=$(grep '.git/hooks/versioning_tool_post_commit.sh' "${full_path_to_hook}/.git/hooks/post-commit" 2>/dev/null)
 		if [ "$result" == "" ]; then
+			result=$(grep '#!/bin/' "${full_path_to_hook}/.git/hooks/post-commit" 2>/dev/null)
+			if [ "$result" == "" ]; then
+				printf "%s\n\n" "#!/bin/bash" > "${full_path_to_hook}/.git/hooks/post-commit"
+			fi
 			printf "\n%s\n" ".git/hooks/versioning_tool_post_commit.sh" >> "${full_path_to_hook}/.git/hooks/post-commit"
 		fi
 
 		# post-merge
 		result=$(grep '.git/hooks/versioning_tool_post_merge.sh' "${full_path_to_hook}/.git/hooks/post-merge" 2>/dev/null)
 		if [ "$result" == "" ]; then
+			result=$(grep '#!/bin/' "${full_path_to_hook}/.git/hooks/post-merge" 2>/dev/null)
+			if [ "$result" == "" ]; then
+				printf "%s\n\n" "#!/bin/bash" > "${full_path_to_hook}/.git/hooks/post-merge"
+			fi
 			printf "\n%s\n" '.git/hooks/versioning_tool_post_merge.sh "$@"' >> "${full_path_to_hook}/.git/hooks/post-merge"
 		fi
 
 		# prepare-commit-msg
 		result=$(grep '.git/hooks/versioning_tool_prepare_commit_msg.sh' "${full_path_to_hook}/.git/hooks/prepare-commit-msg" 2>/dev/null)
 		if [ "$result" == "" ]; then
+			result=$(grep '#!/bin/' "${full_path_to_hook}/.git/hooks/prepare-commit-msg" 2>/dev/null)
+			if [ "$result" == "" ]; then
+				printf "%s\n\n" "#!/bin/bash" > "${full_path_to_hook}/.git/hooks/prepare-commit-msg"
+			fi
 			printf "\n%s\n" '.git/hooks/versioning_tool_prepare_commit_msg.sh "$1"' >> "${full_path_to_hook}/.git/hooks/prepare-commit-msg"
 		fi
 	fi
@@ -77,15 +89,15 @@ install_wrapper() {
 }
 
 init_git_repo() {
-        full_path_to_hook=$(\git rev-parse --show-toplevel 2>/dev/null)
-        if [ "$full_path_to_hook" == "" ]; then
-                log "Creating new git repo"
-                versioning_hooks/pre-git init >/dev/null 2>&1
-        fi
-        log "Remove sample hooks in git repo"
-        remove_old_hooks
-        log "Install hooks from versioning_hooks/"
-        install_new_hooks
+	full_path_to_hook=$(\git rev-parse --show-toplevel 2>/dev/null)
+	if [ "$full_path_to_hook" == "" ]; then
+		log "Creating new git repo"
+		versioning_hooks/pre-git init >/dev/null 2>&1
+	fi
+	log "Remove sample hooks in git repo"
+	remove_old_hooks
+	log "Install hooks from versioning_hooks/"
+	install_new_hooks
 }
 
 setup() {
@@ -144,13 +156,13 @@ elif [ "$1" == "3" ]; then
 	log "Installing wrapper, delete old git repo, init new git repo..."
 	install_wrapper	
 	log "Deleting old git repo"
-        delete_old_git_repo
+	delete_old_git_repo
 	init_git_repo
 elif [ "$1" == "4" ]; then
 	log "Installing wrapper, delete old git repo, init new, setup branches..."
 	install_wrapper
 	log "Deleting old git repo"
-        delete_old_git_repo
+	delete_old_git_repo
 	init_git_repo
 	setup
 else
