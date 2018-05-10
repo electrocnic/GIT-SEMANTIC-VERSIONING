@@ -8,6 +8,4 @@
 # Is only called by git after a successful merge without conflicts!!! (Post-Commit and Pre-Merge will care about that)
 .git/hooks/versioning_tool_post_merge.sh "$@"
 
-
 # ... your own stuff ...
-

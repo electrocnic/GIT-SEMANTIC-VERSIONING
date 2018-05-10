@@ -10,7 +10,15 @@ assert_increment_arg_given() {
 	if [ "$branch_name" == "$master_version_branch_name" -o "$branch_name" == "$major_version_branch_name" ]; then
 		if [ "$versioning_arg" == "" -a $commit_and_merge_only_if_increment_or_hotfix_argument_given -eq 1 ]; then
 			echo "If you want to commit or merge to the $master_version_branch_name or $major_version_branch_name branches,"
-			echo "you need to append \"--increment\", \"--hotfix\" or \"--no-increment\" to the end of your git-command (after the git arguments)."
+			echo "you need to append \"--increment\", \"--hotfix\" or \"--no-increment\""
+			echo "to the end of your git-command (after the git arguments)."
+			exit 1;
+		fi
+	elif [ "$branch_name" == "$minor_version_branch_name" ]; then
+		if [ "$versioning_arg" == "" -a $commit_and_merge_only_if_increment_or_hotfix_argument_given -eq 1 ]; then
+			echo "If you want to commit or merge to the $minor_version_branch_name branch,"
+			echo "you need to append \"--increment\" (which also means \"hotfix\" in this case) or \"--no-increment\""
+			echo "to the end of your git-command (after the git arguments)." 
 			exit 1;
 		fi
 	fi
@@ -108,20 +116,3 @@ pre_git "$@"
 final_result=$?
 rm "${path_to_this_dir}/../$versioning_arg" 2>/dev/null
 exit $final_result
-
-# TODO: think about different usages of git commit and git merge:
-# git commit --amend might be one, or git merge --abort: WHAT should happen in
-# such cases??  Now we don't handle that. We just are about to handle 
-# normal merges with the versioning tool. Also normal commits. We want to
-# ignore special cases NOW. But we should care about special cases!
-
-
-
-# !!!!  TODO   !!!!
-# Debug: warum werden offenbar die source anweisungen ned richtig ausgefuehrt?
-# jedenfalls werden die auf dev/null geleitet weshalb man die ausgabe dazu ned sieht.
-# und jedenfalls konnten keine funktionen aus der util.sh gefunden werden.
-# soll heissen: FIX THAT SHIT YOU LAZY CUNT!!!
-
-
-

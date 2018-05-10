@@ -26,6 +26,8 @@ log "Full version: ${full_version}"
 short_version=$(echo "${full_version}" | sed -re "s~([0-9]+.[0-9]+.[0-9]+.[0-9]+)~\1~g") #TODO: if does not match, add any char any times to end of regex.
 log "Short version: ${short_version}"
 
-sed -i.bak -e "1s~^~[$short_version]: ~g" "$1"
+if [ $version_in_commit_message -eq 1 ]; then
+	sed -i.bak -e "1s~^~[$short_version]: ~g" "$1"
+fi
 
 exit 0
