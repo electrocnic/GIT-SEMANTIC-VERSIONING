@@ -101,11 +101,11 @@ init_git_repo() {
 }
 
 setup() {
-	git commit -m 'Initial Commit' --increment #>/dev/null 2>&1
+	git commit -m 'Initial Commit' --no-increment #>/dev/null 2>&1
 	git checkout -b major #>/dev/null 2>&1
-	git commit -m 'Initialize Major Branch' --increment #>/dev/null 2>&1
+	git commit -m 'Initialize Major Branch' --no-increment #>/dev/null 2>&1
 	git checkout -b minor #>/dev/null 2>&1
-	git commit -m 'Initialize Minor Branch' #>/dev/null 2>&1
+	git commit -m 'Initialize Minor Branch' --no-increment #>/dev/null 2>&1
 	git checkout -b develop #>/dev/null 2>&1
 }
 
