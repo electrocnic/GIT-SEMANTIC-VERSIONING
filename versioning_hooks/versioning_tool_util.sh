@@ -15,6 +15,9 @@ write_version_to_file() {
 	log "write_version_to_file: \"$1\""
 	touch "${version_file}"
 	echo "$1" > "${version_file}"
+	# TODO: Uncomment the lines below if you want to automatically adapt the version in a pom file.
+	#POM_LINE="<version>$1</version>"
+	#sed -i -r "s~<version>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+</version>~  ${POM_LINE}~g" pom.xml
 }
 
 parse_master_major_minor_count() {
